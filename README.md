@@ -28,7 +28,9 @@ Sur l'autre
 4. Quelle est la fréquence centrale de modulation ? Chercher quelles fréquences sont disponibles en Europe et dans le reste du monde. 
   868.1MHz dans ce cas.
   Pour l'Eu : 
+  
   Pour le monde :
+  
 5. À quoi correspond le paramètre "SF" ? Chercher les conséquences de ce paramètre sur la transmission.
   SF : Spreading factor : l'étalement de la transmission dans le temps. 
   Si SF augmente => sensibilité plus importante, plus de risque de collision, plus grande portée
