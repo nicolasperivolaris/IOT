@@ -365,13 +365,15 @@ void receivepacket() {
             printf("Length: %i", (int)receivedbytes);
             printf("\n");
             printf("Payload: %s\n", message);
+            begin = time(NULL);
 
-        } // received a message
-        time_t end = time(NULL);
-        unsigned long secondes = (unsigned long) difftime(end, begin);
-        if(secondes > 5){
-            printf("Missed msg.");
-            begin = 0;
+        } else {
+            time_t end = time(NULL);
+            unsigned long secondes = (unsigned long) difftime(end, begin);
+            if(secondes > 5){
+                printf("Missed msg. \n");
+                begin = 0;
+            }
         }
 
     } // dio0=1
