@@ -150,6 +150,8 @@ typedef unsigned char byte;
 static const int CHANNEL = 0;
 
 time_t begin;
+FILE *datafile;
+int nbPacket = 0;
 
 char message[256];
 
@@ -366,7 +368,7 @@ void receivepacket() {
             printf("\n");
             printf("Payload: %s\n", message);
             begin = time(NULL);
-
+            fprintf(datafile, "%d,%d",nbPacket++, readReg(0x1A)-rssicorr);
         } 
 
     } // dio0=1
@@ -376,6 +378,7 @@ void receivepacket() {
             if(secondes > 5){
                 printf("Missed msg. \n");
                 begin = time(NULL);
+                fprintf(datafile, "%d, N/A",nbPacket++);
             }
         }
 }
@@ -482,6 +485,7 @@ int main (int argc, char *argv[]) {
         printf("------------------\n");
 
         begin = time(NULL);
+        datafile = fopen("data.csv","a");
         while(1) {
             receivepacket(); 
             delay(1);
