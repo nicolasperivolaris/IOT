@@ -468,7 +468,7 @@ int main (int argc, char *argv[]) {
         if (argc > 2)
             strncpy((char *)hello, argv[2], sizeof(hello));
 
-        for(int i = 0; i<12; i++) {
+        while(1) {
             txlora(hello, strlen((char *)hello));
             delay(5000);
         }
