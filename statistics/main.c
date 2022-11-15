@@ -174,7 +174,7 @@ int RST   = 0;
 sf_t sf = SF7;
 
 // Set center frequency
-uint32_t  freq = 868100000; // in Mhz! (868.1)
+uint32_t  freq = 868700000; // in Mhz! (868.1)
 
 byte hello[32] = "HELLO";
 
@@ -367,16 +367,17 @@ void receivepacket() {
             printf("Payload: %s\n", message);
             begin = time(NULL);
 
-        } else {
+        } 
+
+    } // dio0=1
+    else {
             time_t end = time(NULL);
             unsigned long secondes = (unsigned long) difftime(end, begin);
             if(secondes > 5){
                 printf("Missed msg. \n");
-                begin = 0;
+                begin = time(NULL);
             }
         }
-
-    } // dio0=1
 }
 
 static void configPower (int8_t pw) {
