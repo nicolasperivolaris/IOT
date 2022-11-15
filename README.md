@@ -27,7 +27,7 @@ Sur l'autre
 3. Après avoir modifié le fichier main.c pour chaque RPi, tester l'émission et la réception. (voir plus haut)
 4. Quelle est la fréquence centrale de modulation ? Chercher quelles fréquences sont disponibles en Europe et dans le reste du monde.
     #### Fréquence centrale de modulation :
-    868.1MHz dans ce cas.
+    868.7MHz dans notre cas.
     #### Fréquences disponibles en Europe dans le monde : 
     -EU863-870	EU868\
     -US902-928	US915\
