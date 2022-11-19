@@ -488,7 +488,7 @@ int main (int argc, char *argv[]) {
         datafile = fopen("data.csv","a");
         for(int i = 0; i<20; i++) {
             receivepacket(); 
-            delay(1);
+            delay(5000);
         }
 
     }
