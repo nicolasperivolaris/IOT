@@ -1,5 +1,5 @@
 # IOT - Rapport
-## Intro : installation des rasp et test de connexion
+## Partie 1 : Installation des rasp et test de connexion
 ### Manipulations :
 
 Installation de l'OS sur le rasp  
@@ -49,6 +49,11 @@ Sur l'autre
 5. À quoi correspond le paramètre "SF" ? Chercher les conséquences de ce paramètre sur la transmission.\
   SF : Spreading factor : l'étalement de la transmission dans le temps. Ratio entre le chip rate et le actual data rate. \
   Si SF augmente => sensibilité plus importante, plus de risque de collision, plus grande portée, le airtime augmente.
+  
+## Partie 2 : Réseau de capteurs
+### Structure
+login : isib
+mdp : irisib
   
 ## Bibliographie
 https://www.sciencedirect.com/topics/engineering/spreading-factor#:~:text=The%20spreading%20factor%20defines%20the,spreading%20factors%20numbered%207%E2%80%9312.
