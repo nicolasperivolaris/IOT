@@ -9,7 +9,7 @@ server = 'server.perivolaris.be'
 database = 'IOT'
 username = 'isib'
 password = 'irisib'
-driver = '{ODBC Driver 17 for SQL Server}'
+driver = '{ODBC Driver 18 for SQL Server}'
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
@@ -34,7 +34,7 @@ def on_message(client, userdata, msg):
             return
     insert = "INSERT  into " + type + " (valeur, date) values (" + payload[1:] + ",'" + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") +"')"
     with pyodbc.connect(
-        'DRIVER=' + driver + ';SERVER=tcp:' + server + ';PORT=1433;DATABASE=' + database + ';UID=' + username + ';PWD=' + password) as conn:
+        'DRIVER=' + driver + ';SERVER=tcp:' + server + ';PORT=1433;' + 'TrustServerCertificate=yes;DATABASE=' + database + ';UID=' + username + ';PWD=' + password) as conn:
         with conn.cursor() as cursor:
             response = cursor.execute(insert)
         print(response)
@@ -51,10 +51,5 @@ client.on_subscribe = on_subscribe
 client.username_pw_set("isib-syn",
                        "NNSXS.RHV2H4L42Z7EGNHOY6GNLLESIQOZIGKDFJUFGGQ.POV4PRL2XKVUQPN6MEVU7L67AQLHTJROVEQBAKYFE2I63WVDN7UQ")
 client.connect("eu1.cloud.thethings.network", 1883, 60)
-
-with pyodbc.connect(
-        'DRIVER=' + driver + ';SERVER=tcp:' + server + ';PORT=1433;DATABASE=' + database + ';UID=' + username + ';PWD=' + password) as conn:
-    with conn.cursor() as cursor:
-        cursor.execute("SELECT date from Temperature")
 
 client.loop_forever()
