@@ -3,15 +3,21 @@ const unsigned char humidity = 'h';
 const unsigned char light = 'l';
 const unsigned char vibration = 'v';
 
-typedef unsigned char byte;
-
-byte toSend[2];
+char *toSend = {'\0','\0','\0','\0'};
 
 /*  type : une des constentes précédentes
-    data : une valeur numérique de 0 à 255
+    data : une valeur numérique 
     retourne un string*/
-byte* encodeData(byte type, byte data){
-    toSend[0] = type;
-    toSend[1] = data;
+
+char* encodeData(unsigned char type, int data){
+    if(data > 255){
+        toSend[0] = type;
+        toSend[1] = data>>8;
+        toSend[2] = data&255;
+    }else{
+        toSend[0] = type;
+        toSend[1] = data;
+        toSend[2] = '\0';
+    }
     return toSend;
 }
