@@ -99,7 +99,7 @@ def on_message(client, userdata, msg):
             'DRIVER=' + driver + ';SERVER=tcp:' + server + ';PORT=1433;' + 'TrustServerCertificate=yes;DATABASE=' + database + ';UID=' + username + ';PWD=' + password) as conn:
             with conn.cursor() as cursor:
                 response = cursor.execute(insertStmt)
-        if response.messages.count > 0:
+        if len(response.messages) > 0:
             log("DB errors : " + '\n'.join(response.messages))
         else: log("Insert : " + type + " : " + value)
     else:
