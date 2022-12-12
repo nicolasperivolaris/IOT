@@ -1,3 +1,4 @@
+#include <stdio.h>
 const unsigned char temperature = 't';
 const unsigned char humidity = 'h';
 const unsigned char light = 'l';
@@ -9,11 +10,11 @@ char *toSend = {'\0','\0','\0','\0'};
     data : une valeur numérique 
     retourne un string*/
 
-char* encodeData(unsigned char type, int data){
+char* encodeData(unsigned char type, short data){
     if(data > 255){
         toSend[0] = type;
-        toSend[1] = data>>8;
-        toSend[2] = data&255;
+        toSend[1] = data&255;
+        toSend[2] = data>>8;
     }else{
         toSend[0] = type;
         toSend[1] = data;
