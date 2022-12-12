@@ -10,7 +10,7 @@ server = 'server.perivolaris.be'
 database = 'IOT'
 username = 'isib'
 password = 'irisib'
-driver = '{ODBC Driver 17 for SQL Server}'
+driver = '{ODBC Driver 18 for SQL Server}'
 
 lastMesuredTemp = 20
 
@@ -55,8 +55,8 @@ def getHumidity(temperature, resistor):
 
 
     tab = (findColumns(22))
-    resistancesTab = interpolate(tab, 20)
-    return interpolateRh(resistancesTab, 2000)
+    resistancesTab = interpolate(tab, temperature)
+    return interpolateRh(resistancesTab, resistor)
     
 def log(txt):
     log = open("./log", "a")
@@ -74,6 +74,7 @@ def on_connect(client, userdata, flags, rc):
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
+    global lastMesuredTemp  
     decodedPayload = json.loads(msg.payload)["uplink_message"]["decoded_payload"]
     payload = decodedPayload["str"]  # downlink_queued
     #print(msg.topic + " " + str(payload))
@@ -82,12 +83,12 @@ def on_message(client, userdata, msg):
 
     if letter == "t":
         type = "temperature"
-        lastMesuredTemp = payload[1:]
+        lastMesuredTemp = int(payload[1:])
     elif letter == "v": 
         type = "vibration"
     elif letter == "h": 
         type = "humidity"
-        value = getHumidity(lastMesuredTemp, value)
+        value = str(getHumidity(lastMesuredTemp, int(value)))
     elif letter == "l": 
         type = "light"
     else:
