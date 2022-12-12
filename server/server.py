@@ -58,6 +58,11 @@ def getHumidity(temperature, resistor):
     resistancesTab = interpolate(tab, 20)
     return interpolateRh(resistancesTab, 2000)
     
+def log(txt):
+    log = open("./log", "a")
+    log.write("[" + str(datetime.datetime.now()) +"]"+ txt + "\n")
+    print("[" + str(datetime.datetime.now()) +"]"+ txt)
+    log.close()
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
@@ -71,7 +76,7 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
     decodedPayload = json.loads(msg.payload)["uplink_message"]["decoded_payload"]
     payload = decodedPayload["str"]  # downlink_queued
-    print(msg.topic + " " + str(payload))
+    #print(msg.topic + " " + str(payload))
     letter = payload[0].lower()
     value = payload[1:]
 
@@ -85,13 +90,20 @@ def on_message(client, userdata, msg):
         value = getHumidity(lastMesuredTemp, value)
     elif letter == "l": 
         type = "light"
+    else:
+        type = False    
 
-    insertStmt = "INSERT  into " + type + " (valeur, date) values (" + value + ",'" + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") +"')"
-    with pyodbc.connect(
-        'DRIVER=' + driver + ';SERVER=tcp:' + server + ';PORT=1433;' + 'TrustServerCertificate=yes;DATABASE=' + database + ';UID=' + username + ';PWD=' + password) as conn:
-        with conn.cursor() as cursor:
-            response = cursor.execute(insertStmt)
-        print(response)
+    if type:
+        insertStmt = "INSERT  into " + type + " (valeur, date) values (" + value + ",'" + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") +"')"
+        with pyodbc.connect(
+            'DRIVER=' + driver + ';SERVER=tcp:' + server + ';PORT=1433;' + 'TrustServerCertificate=yes;DATABASE=' + database + ';UID=' + username + ';PWD=' + password) as conn:
+            with conn.cursor() as cursor:
+                response = cursor.execute(insertStmt)
+        if response.messages.count > 0:
+            log("DB errors : " + '\n'.join(response.messages))
+        else: log("Insert : " + type + " : " + value)
+    else:
+        log("format error : " + payload)
 
 def on_subscribe(client, qos=0, options=None, properties=None):
     print(client, qos, options, properties)
