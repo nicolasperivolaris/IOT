@@ -10,12 +10,14 @@ char *toSend = {'\0','\0','\0','\0'};
     data : une valeur numérique 
     retourne un string*/
 
-char* encodeData(unsigned char type, short data){
+char* encodeData(unsigned char type, signed short data){
     if(data > 255){
+        data += 32767;
         toSend[0] = type;
         toSend[1] = data&255;
         toSend[2] = data>>8;
     }else{
+        data += 127;
         toSend[0] = type;
         toSend[1] = data;
         toSend[2] = '\0';

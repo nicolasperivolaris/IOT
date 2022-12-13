@@ -47,7 +47,6 @@ def getHumidity(temperature, resistor):
         return tab[:, 0]-(tab[:, 0]-tab[:, 1])*ratioTemp
 
 
-
     def interpolateRh(tab, resistance):
         row = np.abs(tab - resistance).argmin()
         ratioRes = (resistance - tab[row])/(tab[row-1]-tab[row])
@@ -56,7 +55,7 @@ def getHumidity(temperature, resistor):
 
     tab = (findColumns(22))
     resistancesTab = interpolate(tab, temperature)
-    return interpolateRh(resistancesTab, resistor)
+    return int(interpolateRh(resistancesTab, resistor))
     
 def log(txt):
     log = open("./log", "a")
@@ -78,33 +77,40 @@ def on_message(client, userdata, msg):
     decodedPayload = json.loads(msg.payload)["uplink_message"]["decoded_payload"]
     payload = decodedPayload["str"]  # downlink_queued
     #print(msg.topic + " " + str(payload))
-    letter = payload[0].lower()
-    value = payload[1:]
+    i=0
+    while i<len(payload):
+        letter = payload[i].lower()
+        i+=1
+        j = i+1
+        while j<len(payload)-1 and not payload[j].isalpha():
+            j+=1
+        value = payload[i:j]
 
-    if letter == "t":
-        type = "temperature"
-        lastMesuredTemp = int(payload[1:])
-    elif letter == "v": 
-        type = "vibration"
-    elif letter == "h": 
-        type = "humidity"
-        value = str(getHumidity(lastMesuredTemp, int(value)))
-    elif letter == "l": 
-        type = "light"
-    else:
-        type = False    
+        if letter == "t":
+            type = "temperature"
+            lastMesuredTemp = int(value)
+        elif letter == "v": 
+            type = "vibration"
+        elif letter == "h": 
+            type = "humidity"
+            value = str(getHumidity(lastMesuredTemp, int(value)))
+        elif letter == "l": 
+            type = "light"
+        else:
+            type = False    
+        i = j
 
-    if type:
-        insertStmt = "INSERT  into " + type + " (valeur, date) values (" + value + ",'" + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") +"')"
-        with pyodbc.connect(
-            'DRIVER=' + driver + ';SERVER=tcp:' + server + ';PORT=1433;' + 'TrustServerCertificate=yes;DATABASE=' + database + ';UID=' + username + ';PWD=' + password) as conn:
-            with conn.cursor() as cursor:
-                response = cursor.execute(insertStmt)
-        if len(response.messages) > 0:
-            log("DB errors : " + '\n'.join(response.messages))
-        else: log("Insert : " + type + " : " + value)
-    else:
-        log("format error : " + payload)
+        if type:
+            insertStmt = "INSERT  into " + type + " (valeur, date) values (" + value + ",'" + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") +"')"
+            with pyodbc.connect(
+                'DRIVER=' + driver + ';SERVER=tcp:' + server + ';PORT=1433;' + 'TrustServerCertificate=yes;DATABASE=' + database + ';UID=' + username + ';PWD=' + password) as conn:
+                with conn.cursor() as cursor:
+                    response = cursor.execute(insertStmt)
+            if len(response.messages) > 0:
+                log("DB errors : " + '\n'.join(response.messages))
+            else: log("Insert : " + type + " : " + value)
+        else:
+            log("format error : " + payload)
 
 def on_subscribe(client, qos=0, options=None, properties=None):
     print(client, qos, options, properties)
