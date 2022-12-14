@@ -159,7 +159,7 @@ void loop() {
   //////////////////// CODE POUR LE CAPTEUR DE VIBRATION, ON UTILISE LES INTERRUPTION DE L'ARDUINO POUR COMPTER LE NOMBRE DE FOIS //////////////
   /////////////////////////////////////////// QUE LE CAPTEUR A ETE TOUCHER //////////////////////////////////////
 
- attachInterrupt(digitalPinToInterrupt(0),Cpt_touch(),CHANGE);
+ attachInterrupt(digitalPinToInterrupt(0),Cpt_touch(),RISING);
  Serial.println(Nb_touch);
 
 
