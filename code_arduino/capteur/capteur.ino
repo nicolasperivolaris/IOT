@@ -17,7 +17,7 @@ void setup() {
 
   pinMode(PIN_LUMI, INPUT);     
   pinMode(PIN_HUMI, INPUT);     
-  pinMode(0, INPUT);     
+  pinMode(PIN_VIB, INPUT);     
   pinMode(PIN_TEMP, INPUT);    
 
 }
@@ -63,11 +63,12 @@ int get_temperature_lmt84(int voltage) {
 
  ///////////////////////////////////// Fonction pour compter le nombre de fois que le cateur de vibration et toucher ////////////////////
 
-int Nb_Secouse;
+int Nb_touch = 0;
 
-void Cpt_Secouse(){
-  Nb_Secouse++;
+void Cpt_touch(){
+  Nb_touch++;
 }
+
 
 
 void loop() {
@@ -76,8 +77,8 @@ void loop() {
 
   ////////////////////////// Code POUR LMT84 /////////////////////////////
 
-  float Data_mV_Temp =  analogRead(PIN_TEMP) * (VCC/1023.0); // ;  //  + 40Pour avoir un truc en millivolt car formule et tableau en mV,
-                                                                // On fait plus 40 pour avoir plus de precision
+  float Data_mV_Temp =  analogRead(PIN_TEMP) * (VCC/1023.0); //  Pour avoir un truc en millivolt car formule et tableau en mV,
+                                                          
  
   get_temperature_lmt84(Data_mV_Temp);                         // Utilise le tableau de donnés
   //float tempC = ((5.506 - sqrt(sq(-5.506) + (4 * 0.00176 * (870.6 - Data_mV_Temp ))))/(2 * -0.00176)) + 30; // Utilise la formule de la Datasheet
@@ -128,9 +129,9 @@ void loop() {
   //////////////////// CODE POUR LE CAPTEUR DE VIBRATION, ON UTILISE LES INTERRUPTION DE L'ARDUINO POUR COMPTER LE NOMBRE DE FOIS //////////////
   /////////////////////////////////////////// QUE LE CAPTEUR A ETE TOUCHER //////////////////////////////////////
  
- attachInterrupt(digitalPinToInterrupt(0),Cpt_Secouse,RISING);
+ attachInterrupt(digitalPinToInterrupt(0),Cpt_touch,RISING);
  Serial.print("le capteur a été touché ");
- Serial.print(Nb_Secouse);
+ Serial.print(Nb_touch);
  Serial.println(" fois");
 
 

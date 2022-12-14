@@ -8,6 +8,7 @@
 # define PIN_HUMI A4           // Capteur Humidité H25K5A
 # define PIN_VIB  0             // Capteur de Vibration Adafruit 1766
 # define PIN_TEMP A6           // Capteur Temperature LMT84
+# define VCC 3300
 
   ///////////////////////////// Constante pour encoder l'encodage des données ////////////////
 
@@ -126,7 +127,7 @@ void loop() {
 
   ///////////////////////////////////////////////////////// Code POUR LMT84 ////////////////////////////////////////////////////////////
 
-  float Data_mV_Temp =  analogRead(PIN_TEMP) * (5000/1023) + 40;  // Pour avoir un truc en millivolt car formule et tableau en mV,
+  float Data_mV_Temp =  analogRead(PIN_TEMP) * (VCC/1023.0);      // Pour avoir un truc en millivolt car formule et tableau en mV,
                                                                   // On fait plus 40 pour avoir plus de precision
  
   get_temperature_lmt84(Data_mV_Temp);                            // Utilise le tableau de donnés
@@ -137,10 +138,10 @@ void loop() {
   
   ////////////////////////////////////////////////////// CODE POUR LE CAPTEUR D'HUMIDITE ///////////////////////////////////////////////////
   
-  int Data_mV_HUMI = analogRead(PIN_HUMI) * (5000/1023);    // Pour avoir quelque chose en mV, On divise par 1023 car ADC sur 10bits,
+  float Data_mV_HUMI = analogRead(PIN_HUMI) * (VCC/1023.0); // Pour avoir quelque chose en mV, On divise par 1023 car ADC sur 10bits,
                                                             // il peut être sur 8 ou 12 aussi,
 
-  int RH = ((5000.0 - Data_mV_HUMI) * 47000) / 5000;        //resistance du sensor en Ohm  
+  int RH = ((VCC - Data_mV_HUMI) * 560000) / VCC;          //resistance du sensor en Ohm  
 
   Serial.print("Resistance RH du capteur en Ohm: ");
   Serial.println(RH);                                       // Data Envoyer
@@ -149,8 +150,8 @@ void loop() {
   ////////////////////////////////////// CODE POUR LE CAPTEUR DE LUMIERE DATA ENVOYER EN POURCENTAGE/////////////////////////////
 
   
-  int Data_mV_Lumi = analogRead(PIN_LUMI) * (5000/1024) ;
-  int DataLPourcent = (Data_mV_Lumi * 100)/5000;
+  int Data_mV_Lumi = analogRead(PIN_LUMI) * (VCC/1023.0) ;
+  int DataLPourcent = (Data_mV_Lumi * 100)/VCC;
 
   Serial.print("Pourcentage de Luminosité: ");
   Serial.println(DataLPourcent);                            // Data envoyer
@@ -159,8 +160,10 @@ void loop() {
   //////////////////// CODE POUR LE CAPTEUR DE VIBRATION, ON UTILISE LES INTERRUPTION DE L'ARDUINO POUR COMPTER LE NOMBRE DE FOIS //////////////
   /////////////////////////////////////////// QUE LE CAPTEUR A ETE TOUCHER //////////////////////////////////////
 
- attachInterrupt(digitalPinToInterrupt(0),Cpt_touch(),RISING);
- Serial.println(Nb_touch);
+ attachInterrupt(digitalPinToInterrupt(0),Cpt_touch,RISING);
+ Serial.print("le capteur a été touché ");
+ Serial.print(Nb_touch);
+ Serial.println(" fois");
 
 
   //////////////////////////////////////////////////// Envoie des données ////////////////////////////////////////////////////////////////////////
@@ -203,6 +206,8 @@ void loop() {
     Serial.write(modem.read());  
   }
   modem.poll();
+
+  Nb_touch = 0;  
 
   delay(10000);
 }
