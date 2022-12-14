@@ -8,7 +8,7 @@
 # define PIN_HUMI A1           // Capteur Humidité H25K5A
 # define PIN_VIB  0            // Capteur de Vibration Adafruit 1766
 # define PIN_TEMP A6           // Capteur Temperature LMT84
-
+# define VCC 3300
 
 
 void setup() {
@@ -76,16 +76,16 @@ void loop() {
 
   ////////////////////////// Code POUR LMT84 /////////////////////////////
 
-  float Data_mV_Temp =  analogRead(PIN_TEMP) * (5000/1023); // + 40;  // Pour avoir un truc en millivolt car formule et tableau en mV,
+  float Data_mV_Temp =  analogRead(PIN_TEMP) * (VCC/1023.0); // ;  //  + 40Pour avoir un truc en millivolt car formule et tableau en mV,
                                                                 // On fait plus 40 pour avoir plus de precision
  
   get_temperature_lmt84(Data_mV_Temp);                         // Utilise le tableau de donnés
   //float tempC = ((5.506 - sqrt(sq(-5.506) + (4 * 0.00176 * (870.6 - Data_mV_Temp ))))/(2 * -0.00176)) + 30; // Utilise la formule de la Datasheet
   //On utilise la tableau car consomme moins que faire le calcule
   
-  Serial.print("Donner relever par la pin: ");
+  Serial.print("Donnée relevée par la pin: ");
   Serial.println(analogRead(PIN_TEMP));
-  Serial.print("donner relever en mV :");
+  Serial.print("donnée relevée en mV :");
   Serial.println(Data_mV_Temp);
   Serial.print("Temperature en C° :");
   Serial.println(get_temperature_lmt84(Data_mV_Temp));   // Data envoyer
@@ -96,14 +96,14 @@ void loop() {
   
   ////////////////////////////////////////// CODE POUR LE CAPTEUR D'HUMIDITE ///////////////////////////////////////////////////
   
-  int Data_mV_HUMI = analogRead(PIN_HUMI) * (5000/1023);    // Pour avoir quelque chose en mV, On divise par 1023 car ADC sur 10bits,
+  float Data_mV_HUMI = analogRead(PIN_HUMI) * (VCC/1023.0);    // Pour avoir quelque chose en mV, On divise par 1023 car ADC sur 10bits,
                                                             // il peut être sur 8 ou 12 aussi,
 
-  int RH = ((5000.0 - Data_mV_HUMI) * 47000) / 5000;        //resistance du sensor en Ohm  
+  int RH = ((VCC - Data_mV_HUMI) * 560000) / VCC;        //resistance du sensor en Ohm  
   
-  Serial.print("Donner relever par la pin: ");
+  Serial.print("Donnée relevée par la pin: ");
   Serial.println(analogRead(PIN_HUMI));
-  Serial.print("Donner en mV: ");
+  Serial.print("Donnée en mV: ");
   Serial.println(Data_mV_HUMI);
   Serial.print("Resistance RH du capteur en Ohm: ");
   Serial.println(RH);                                       // Data Envoyer
@@ -113,11 +113,11 @@ void loop() {
   ////////////////////////////////////// CODE POUR LE CAPTEUR DE LUMIERE DATA ENVOYER EN POURCENTAGE/////////////////////////////
 
   
-  int Data_mV_Lumi = analogRead(PIN_LUMI) * (5000/1024) ;
+  int Data_mV_Lumi = analogRead(PIN_LUMI) * (VCC/1023.0) ;
 
-  int DataLPourcent = (Data_mV_Lumi * 100)/5000;
+  int DataLPourcent = (Data_mV_Lumi * 100)/VCC;
 
-  Serial.print("Donner relever par la pin en mV: ");
+  Serial.print("Donnée relevée par la pin en mV: ");
   Serial.println(Data_mV_Lumi);
   Serial.print("Pourcentage de Luminosité: ");
   Serial.println(DataLPourcent);                            // Data envoyer
@@ -129,7 +129,7 @@ void loop() {
   /////////////////////////////////////////// QUE LE CAPTEUR A ETE TOUCHER //////////////////////////////////////
  
  attachInterrupt(digitalPinToInterrupt(0),Cpt_Secouse,RISING);
- Serial.print("le capteur a été toucher ");
+ Serial.print("le capteur a été touché ");
  Serial.print(Nb_Secouse);
  Serial.println(" fois");
 
