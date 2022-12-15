@@ -12,8 +12,6 @@ username = 'isib'
 password = 'irisib'
 driver = '{ODBC Driver 18 for SQL Server}'
 
-lastMesuredTemp = 20
-
 def getHumidity(temperature, resistor):
     # missing value have been estimated with excel
     table = [
@@ -78,9 +76,8 @@ def on_message(client, userdata, msg):
     sensor = str(decodedPayload["sensor"])
     light = str(decodedPayload["light"])
     temperature = str(decodedPayload["temperature"])
-    lastMesuredTemp = int(temperature)
     vibration = str(decodedPayload["vibration"])
-    humidity = str(getHumidity(lastMesuredTemp, int(decodedPayload["humidity"])))
+    humidity = str(getHumidity(temperature, int(decodedPayload["humidity"])))
 
 # Send to DB
     insertStmt = "INSERT  into Data (humidity, temperature, vibration, light, date, device) values (" + humidity + ", " + temperature + ", " + vibration + ", " + light + ",'" + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") +"', " + sensor + ")"
