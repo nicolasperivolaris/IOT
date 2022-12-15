@@ -90,6 +90,8 @@ def on_message(client, userdata, msg):
             response = cursor.execute(insertStmt)
     if len(response.messages) > 0:
         log("DB errors : " + '\n'.join(response.messages))
+    else:
+        log("Inserted : humidity["+ humidity + "], light[" + light + "], temperature[" + temperature + "], vibration[" + vibration + "]")
 
 def on_subscribe(client, qos=0, options=None, properties=None):
     print(client, qos, options, properties)
