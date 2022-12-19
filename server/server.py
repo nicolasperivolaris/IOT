@@ -72,14 +72,17 @@ def on_connect(client, userdata, flags, rc):
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
     global lastMesuredTemp  
-    decodedPayload = json.loads(msg.payload)["uplink_message"]["decoded_payload"]
-    sensor = str(decodedPayload["sensor"])
-    light = str(decodedPayload["light"])
-    temperature = decodedPayload["temperature"]
-    vibration = str(decodedPayload["vibration"])
-    humidity = str(getHumidity(temperature, int(decodedPayload["humidity"])))
-    temperature = str(temperature)
-
+    try:
+        decodedPayload = json.loads(msg.payload)["uplink_message"]["decoded_payload"]
+        sensor = str(decodedPayload["sensor"])
+        light = str(decodedPayload["light"])
+        temperature = decodedPayload["temperature"]
+        vibration = str(decodedPayload["vibration"])
+        humidity = str(getHumidity(temperature, int(decodedPayload["humidity"])))
+        temperature = str(temperature)
+    except:
+        log("Format error")
+        return
 # Send to DB
     insertStmt = "INSERT  into Data (humidity, temperature, vibration, light, date, device) values (" + humidity + ", " + temperature + ", " + vibration + ", " + light + ",'" + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") +"', " + sensor + ")"
     with pyodbc.connect(
