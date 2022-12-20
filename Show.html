@@ -10,7 +10,7 @@
     <button onclick="loadContent('2')">Device 2</button>
     <button onclick="loadContent('1')">Device 1</button>
     <iframe src="1" name="background" id="background"
-        style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></iframe>
+        style="position: fixed; top: 0; right: 0; width: 80%; height: 100%;"></iframe>
 </body>
 
 </html>
@@ -36,5 +36,5 @@
     }
     setInterval(function() {
         loadContent(currentPage);
-    }, 5000);
+    }, 30000);
 </script>
