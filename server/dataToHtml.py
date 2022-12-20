@@ -12,6 +12,7 @@ lastTime = time.time()
 class MyRequestHandler(http.server.BaseHTTPRequestHandler):
 
     def do_GET(self):
+        if not self.path in ["/", "/1", "/2"] : return
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
@@ -19,12 +20,19 @@ class MyRequestHandler(http.server.BaseHTTPRequestHandler):
         if time.time() - lastTime > 60:
             makeIndex()
             lastTime = time.time()
-        with open("./index.html", "r") as f:
-            self.wfile.write(f.read().encode())
+        if self.path == "/":
+            with open("./Show.html", "r") as f:
+                self.wfile.write(f.read().encode())
+        elif self.path == "/1":
+            with open("./device1.html", "r") as f:
+                self.wfile.write(f.read().encode())
+        elif self.path == "/2":
+            with open("./device2.html", "r") as f:
+                self.wfile.write(f.read().encode())
 
 
 def makeIndex():
-    with open("./logIOT", "r") as f:
+    with open("./log", "r") as f:
         dataStrings = f.readlines()
 
     dataList = []
@@ -60,7 +68,7 @@ def makeIndex():
     plt.gca().xaxis.set_major_formatter(dates.DateFormatter('%d\n\n%a'))
     figure = plt.gcf()
     figure.set_size_inches(15, 8)
-    mpld3.save_html(fig=figure, fileobj="./index.html")
+    mpld3.save_html(fig=figure, fileobj="./device1.html")
 
 
 server = http.server.HTTPServer(("0.0.0.0", 80), MyRequestHandler)
