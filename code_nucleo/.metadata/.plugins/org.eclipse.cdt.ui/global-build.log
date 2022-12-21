@@ -1,0 +1,25 @@
+10:40:46 **** Incremental Build of configuration Debug for project LoRaWAN_End_Node ****
+make -j8 all 
+arm-none-eabi-gcc "C:/Users/sbelh/Desktop/Cours/M2/iot/code_nucleo/LoRaWAN_End_Node/LoRaWAN/App/lora_app.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DCORE_CM4 -DUSE_HAL_DRIVER -DSTM32WL55xx -c -I../../Core/Inc -I../../LoRaWAN/App -I../../LoRaWAN/Target -I../../Drivers/STM32WLxx_HAL_Driver/Inc -I../../Drivers/STM32WLxx_HAL_Driver/Inc/Legacy -I../../Utilities/trace/adv_trace -I../../Utilities/misc -I../../Utilities/sequencer -I../../Utilities/timer -I../../Utilities/lpm/tiny_lpm -I../../Middlewares/Third_Party/LoRaWAN/LmHandler/Packages -I../../Drivers/CMSIS/Device/ST/STM32WLxx/Include -I../../Middlewares/Third_Party/LoRaWAN/Crypto -I../../Middlewares/Third_Party/LoRaWAN/Mac/Region -I../../Middlewares/Third_Party/LoRaWAN/Mac -I../../Middlewares/Third_Party/LoRaWAN/LmHandler -I../../Middlewares/Third_Party/LoRaWAN/Utilities -I../../Middlewares/Third_Party/SubGHz_Phy -I../../Middlewares/Third_Party/SubGHz_Phy/stm32_radio_driver -I../../Drivers/CMSIS/Include -I../../Drivers/BSP/STM32WLxx_Nucleo -Og -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Application/User/LoRaWAN/App/lora_app.d" -MT"Application/User/LoRaWAN/App/lora_app.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Application/User/LoRaWAN/App/lora_app.o"
+C:/Users/sbelh/Desktop/Cours/M2/iot/code_nucleo/LoRaWAN_End_Node/LoRaWAN/App/lora_app.c: In function 'SendTxData':
+C:/Users/sbelh/Desktop/Cours/M2/iot/code_nucleo/LoRaWAN_End_Node/LoRaWAN/App/lora_app.c:564:15: warning: implicit declaration of function 'SYS_GetLuminosity' [-Wimplicit-function-declaration]
+  564 |       light = SYS_GetLuminosity();
+      |               ^~~~~~~~~~~~~~~~~
+arm-none-eabi-gcc -o "LoRaWAN_End_Node.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\sbelh\Desktop\Cours\M2\iot\code_nucleo\LoRaWAN_End_Node\STM32CubeIDE\STM32WL55JCIX_FLASH.ld" --specs=nosys.specs -Wl,-Map="LoRaWAN_End_Node.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: LoRaWAN_End_Node.elf
+ 
+arm-none-eabi-size   LoRaWAN_End_Node.elf 
+arm-none-eabi-objdump -h -S  LoRaWAN_End_Node.elf  > "LoRaWAN_End_Node.list"
+   text	   data	    bss	    dec	    hex	filename
+  73056	    296	  11280	  84632	  14a98	LoRaWAN_End_Node.elf
+Finished building: default.size.stdout
+ 
+Finished building: LoRaWAN_End_Node.list
+ 
+10:41:17 **** Incremental Build of configuration Debug for project LoRaWAN_End_Node ****
+make -j8 all 
+arm-none-eabi-size   LoRaWAN_End_Node.elf 
+   text	   data	    bss	    dec	    hex	filename
+  73056	    296	  11280	  84632	  14a98	LoRaWAN_End_Node.elf
+Finished building: default.size.stdout
+ 

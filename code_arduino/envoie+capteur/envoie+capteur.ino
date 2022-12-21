@@ -6,7 +6,7 @@
 
 # define PIN_LUMI A3           // Capteur de Luminosité tept 5700
 # define PIN_HUMI A4           // Capteur Humidité H25K5A
-# define PIN_VIB  0             // Capteur de Vibration Adafruit 1766
+# define PIN_VIB  0            // Capteur de Vibration Adafruit 1766
 # define PIN_TEMP A6           // Capteur Temperature LMT84
 # define VCC 3300
 

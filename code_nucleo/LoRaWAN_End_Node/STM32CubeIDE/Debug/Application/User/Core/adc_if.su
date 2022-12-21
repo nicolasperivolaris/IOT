@@ -1,0 +1,6 @@
+C:/Users/sbelh/Desktop/Cours/M2/iot/code_nucleo/LoRaWAN_End_Node/Core/Src/adc_if.c:201:17:ADC_ReadChannels	32	static
+C:/Users/sbelh/Desktop/Cours/M2/iot/code_nucleo/LoRaWAN_End_Node/Core/Src/adc_if.c:80:6:SYS_InitMeasurement	0	static
+C:/Users/sbelh/Desktop/Cours/M2/iot/code_nucleo/LoRaWAN_End_Node/Core/Src/adc_if.c:91:6:SYS_DeInitMeasurement	0	static
+C:/Users/sbelh/Desktop/Cours/M2/iot/code_nucleo/LoRaWAN_End_Node/Core/Src/adc_if.c:140:10:SYS_GetBatteryLevel	8	static
+C:/Users/sbelh/Desktop/Cours/M2/iot/code_nucleo/LoRaWAN_End_Node/Core/Src/adc_if.c:98:9:SYS_GetTemperatureLevel	16	static
+C:/Users/sbelh/Desktop/Cours/M2/iot/code_nucleo/LoRaWAN_End_Node/Core/Src/adc_if.c:180:5:SYS_GetLuminosity	8	static

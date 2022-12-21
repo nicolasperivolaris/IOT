@@ -1,0 +1,15 @@
+LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/arch=x86_64
+LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/name=Local
+LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/os=win32
+configDescList=org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:interruption_nucleo_2 Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:interruption_nucleo_2 Release,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:interuption_nucleo Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:interuption_nucleo Release,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:premiertest Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Strutation Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Strutation Release,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:LoRaWAN_End_Node Debug
+eclipse.preferences.version=1
+org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:LoRaWAN_End_Node\ Debug\ Release/activeLaunchMode=run
+org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:LoRaWAN_End_Node\ Debug\ Release/activeLaunchTarget=null\:---
+org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:LoRaWAN_End_Node\ Debug/activeLaunchMode=run
+org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:LoRaWAN_End_Node\ Debug/activeLaunchTarget=null\:---
+org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:LoRaWAN_End_Node\ Release/activeLaunchMode=run
+org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:LoRaWAN_End_Node\ Release/activeLaunchTarget=null\:---
+org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Strutation\ Debug/activeLaunchMode=run
+org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Strutation\ Debug/activeLaunchTarget=null\:---
+org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Strutation\ Release/activeLaunchTarget=null\:---
+org.eclipse.launchbar.core.descriptorType.default\:LoRaWAN_End_Node\ Debug/activeLaunchTarget=org.eclipse.launchbar.core.launchTargetType.local\:Local
