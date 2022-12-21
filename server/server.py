@@ -12,8 +12,6 @@ username = 'isib'
 password = 'irisib'
 driver = '{ODBC Driver 18 for SQL Server}'
 
-lastMesuredTemp = 20
-
 def getHumidity(temperature, resistor):
     # missing value have been estimated with excel
     table = [
@@ -74,43 +72,27 @@ def on_connect(client, userdata, flags, rc):
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
     global lastMesuredTemp  
-    decodedPayload = json.loads(msg.payload)["uplink_message"]["decoded_payload"]
-    payload = decodedPayload["str"]  # downlink_queued
-    #print(msg.topic + " " + str(payload))
-    i=0
-    while i<len(payload):
-        letter = payload[i].lower()
-        i+=1
-        j = i+1
-        while j<len(payload)-1 and not payload[j].isalpha():
-            j+=1
-        value = payload[i:j]
-
-        if letter == "t":
-            type = "temperature"
-            lastMesuredTemp = int(value)
-        elif letter == "v": 
-            type = "vibration"
-        elif letter == "h": 
-            type = "humidity"
-            value = str(getHumidity(lastMesuredTemp, int(value)))
-        elif letter == "l": 
-            type = "light"
-        else:
-            type = False    
-        i = j
-
-        if type:
-            insertStmt = "INSERT  into " + type + " (valeur, date) values (" + value + ",'" + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") +"')"
-            with pyodbc.connect(
-                'DRIVER=' + driver + ';SERVER=tcp:' + server + ';PORT=1433;' + 'TrustServerCertificate=yes;DATABASE=' + database + ';UID=' + username + ';PWD=' + password) as conn:
-                with conn.cursor() as cursor:
-                    response = cursor.execute(insertStmt)
-            if len(response.messages) > 0:
-                log("DB errors : " + '\n'.join(response.messages))
-            else: log("Insert : " + type + " : " + value)
-        else:
-            log("format error : " + payload)
+    try:
+        decodedPayload = json.loads(msg.payload)["uplink_message"]["decoded_payload"]
+        sensor = str(decodedPayload["sensor"])
+        light = str(decodedPayload["light"])
+        temperature = decodedPayload["temperature"]
+        vibration = str(decodedPayload["vibration"])
+        humidity = str(getHumidity(temperature, int(decodedPayload["humidity"])))
+        temperature = str(temperature)
+    except:
+        log("Format error")
+        return
+# Send to DB
+    insertStmt = "INSERT  into Data (humidity, temperature, vibration, light, date, device) values (" + humidity + ", " + temperature + ", " + vibration + ", " + light + ",'" + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") +"', " + sensor + ")"
+    with pyodbc.connect(
+        'DRIVER=' + driver + ';SERVER=tcp:' + server + ';PORT=1433;' + 'TrustServerCertificate=yes;DATABASE=' + database + ';UID=' + username + ';PWD=' + password) as conn:
+        with conn.cursor() as cursor:
+            response = cursor.execute(insertStmt)
+    if len(response.messages) > 0:
+        log("DB errors : " + '\n'.join(response.messages))
+    else:
+        log("Inserted : device["+sensor+ "], humidity["+ humidity + "], light[" + light + "], temperature[" + temperature + "], vibration[" + vibration + "]")
 
 def on_subscribe(client, qos=0, options=None, properties=None):
     print(client, qos, options, properties)

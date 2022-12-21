@@ -1,93 +1,128 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
 import pypyodbc as odbc
+from matplotlib import dates
+import mpld3
+import http.server
+import time
 
-config = (
-    "DRIVER={SQL Server Native Client 11.0};"
-    "SERVER=server.perivolaris.be;"
-    "DATABASE=IOT;"
-    "UID=isib;"
-    "PWD=irisib;"
-    "MARS_Connection=Yes"
-)
+lastTime = time.time()
 
-# Create a connection to the database
-connexion = odbc.connect(config)
 
-plt.style.use('fivethirtyeight')
+class MyRequestHandler(http.server.BaseHTTPRequestHandler):
 
-def animate(i):
-    # Execute a query to get the new data from the database
-    data = pd.read_sql("SELECT * FROM Temperature WHERE date >= '2022-12-13 16:40:00' ", connexion)
-    data2 = pd.read_sql("SELECT * FROM Vibration WHERE date >= '2022-12-13 16:40:00'", connexion)
-    data3 = pd.read_sql("SELECT * FROM Humidity WHERE date >= '2022-12-13 16:40:00'", connexion)
-    data4 = pd.read_sql("SELECT * FROM Light WHERE date >= '2022-12-13 16:40:00'", connexion)
-    finalist = []
-    finalist2 =[]
-    finalist3 =[]
-    finalist4 =[]
+    def do_GET(self):
+        if not self.path in ["/", "/1", "/2"] : return
+        self.send_response(200)
+        self.send_header("Content-type", "text/html")
+        self.end_headers()
+        global lastTime
+        if time.time() - lastTime > 30:
+            makeIndex()
+            lastTime = time.time()
+        if self.path == "/":
+            with open("./Show.html", "r") as f:
+                self.wfile.write(f.read().encode())
+        elif self.path == "/1":
+            with open("./device1.html", "r") as f:
+                self.wfile.write(f.read().encode())
+        elif self.path == "/2":
+            with open("./device2.html", "r") as f:
+                self.wfile.write(f.read().encode())
 
-    list_frame = [data,data2,data3,data4]
-    list_finalist = [finalist,finalist2,finalist3,finalist4]
-    i = 0
-    for frame in list_frame:
-        for temp in frame['date']:
-            temp = "{}".format(temp)
-            month = temp[5:7]
-            day = temp[8:10]
-            hour = temp[11:16]
-            moment = day+'/'+month+' '+hour
-            list_finalist[i].append(moment)
-        i +=1
 
-    x = finalist
-    x2 = finalist2
-    x3 = finalist3
-    x4 = finalist4
-    y1 = data['valeur']
-    y2 = data2['valeur']
-    y3 = data3['valeur']
-    y4 = data4['valeur']
 
-    #Visualisation de la Température
-    plt.cla()
-    plt.subplot(2, 2, 1)
-    plt.plot(x, y1)
-    #plt.legend(loc='upper left')
-    plt.title('Temperature Variation',fontname="Times New Roman",size=30,fontweight="bold",color='darkblue')
-    plt.xlabel('Time',color='darkblue', size=15)
-    plt.ylabel('Temperature[°C]',color='darkblue', size=15)
-    plt.xticks(finalist, rotation= 90, size=9)
+def makeIndex():
+    config = (
+        "DRIVER={SQL Server Native Client 11.0};"
+        "SERVER=server.perivolaris.be;"
+        "DATABASE=IOT;"
+        "UID=isib;"
+        "PWD=irisib;"
+        "MARS_Connection=Yes"
+    )
 
-    #Visualisation de la vibration
-    plt.subplot(2, 2, 2)
-    plt.plot(x2, y2)
-    #plt.legend(loc='upper left')
-    plt.title('Vibration Variation',fontname="Times New Roman",size=30,fontweight="bold",color='darkblue')
-    plt.xlabel('Time',color='darkblue', size=15)
-    plt.ylabel('Vibration[Hz]',color='darkblue', size=15)
-    plt.xticks(finalist2, rotation= 90, size=9)
+    # Create a connection to the database
+    connexion = odbc.connect(config)
 
-    #Visualisation de l'humidité
-    plt.subplot(2, 2, 3)
-    plt.plot(x3, y3)
-    #plt.legend(loc='upper left')
-    plt.title('Humidity Variation',fontname="Times New Roman",size=30,fontweight="bold",color='darkblue')
-    plt.xlabel('Time',color='darkblue', size=15)
-    plt.ylabel('Humidity[g/m³]',color='darkblue', size=15)
-    plt.xticks(finalist3, rotation= 90, size=9)
+    data = pd.read_sql("SELECT * FROM Data WHERE date >= '2022-12-18 13:00:00' AND device = 1", connexion)
+    data2 = pd.read_sql("SELECT * FROM Data WHERE date >= '2022-12-18 13:00:00' AND device = 0", connexion)
+    print(data) 
 
-    #Visualisation de la lumière
-    plt.subplot(2, 2, 4)
-    plt.plot(x4, y4)
-    #plt.legend(loc='upper left')
-    plt.title('Light Variation',fontname="Times New Roman",size=30,fontweight="bold",color='darkblue')
-    plt.xlabel('Time',color='darkblue', size=15)
-    plt.ylabel('Light[lux]',color='darkblue', size=15)
-    plt.xticks(finalist4, rotation= 90, size=9)
-    plt.tight_layout()
+    def ma_fonction(x):
+        if x > 0:
+            return 1
+        else:
+            return x
+    
 
-ani = FuncAnimation(plt.gcf(), animate, interval=1000)
-plt.tight_layout()
-plt.show()
+    frames = [data,data2]
+    for frame in frames:
+        for type in ["light", "temperature", "humidity"]:
+            frame[type] = frame[type].rolling(30).mean()  # rolling mean to smooth every thing
+        frame['vibration'] = frame['vibration'].apply(ma_fonction)
+    
+    data['date'] = pd.to_datetime(data['date'])
+    data = data.drop(columns=['id','device'])
+    print(data)
+
+    # Create a figure with 2 rows and 2 columns of subplots
+    fig, axs = plt.subplots(2, 2)
+    axs[0, 0].plot(data['date'], data['vibration'])
+    axs[0, 0].set_title("Vibration Variation")
+    axs[0, 0].set_ylabel("Vibration")
+    axs[0, 0].set_xlabel("Time")
+    axs[0, 1].plot(data['date'], data['temperature'])
+    axs[0, 1].set_title("Temperature Variation")
+    axs[0, 1].set_ylabel("Temperature [°C]")
+    axs[0, 1].set_xlabel("Time")
+    axs[1, 0].plot(data['date'], data['humidity'])
+    axs[1, 0].set_title("Humidity Variation")
+    axs[1, 0].set_ylabel("Humidity")
+    axs[1, 0].set_xlabel("Time")
+    axs[1, 1].plot(data['date'], data['light'])
+    axs[1, 1].set_title("Light Variation")
+    axs[1, 1].set_ylabel("Light")
+    axs[1, 1].set_xlabel("Time")
+
+
+    # Set the x-axis labels for all subplots
+    for ax in axs.flat:
+        ax.xaxis.set_major_locator(dates.DayLocator())
+        ax.xaxis.set_major_formatter(dates.DateFormatter('%d\n\n%a'))
+
+    fig.set_size_inches(10, 5)
+    mpld3.save_html(fig=fig,  fileobj="./device1.html")
+    #mpld3.show(fig)
+
+
+    fig2, axs2 = plt.subplots(2, 2)
+
+    axs2[0, 0].plot(data2['date'], data2['vibration'])
+    axs2[0, 0].set_title("Vibration Variation")
+    axs2[0, 0].set_ylabel("Vibration")
+    axs2[0, 0].set_xlabel("Time")
+    axs2[0, 1].plot(data2['date'], data2['temperature'])
+    axs2[0, 1].set_title("Temperature Variation")
+    axs2[0, 1].set_ylabel("Temperature [°C]")
+    axs2[0, 1].set_xlabel("Time")
+    axs2[1, 0].plot(data2['date'], data2['humidity'])
+    axs2[1, 0].set_title("Humidity Variation")
+    axs2[1, 0].set_ylabel("Humidity")
+    axs2[1, 0].set_xlabel("Time")
+    axs2[1, 1].plot(data2['date'], data2['light'])
+    axs2[1, 1].set_title("Light Variation")
+    axs2[1, 1].set_ylabel("Light")
+    axs2[1, 1].set_xlabel("Time")
+
+    # Set the x-axis labels for all subplots
+    for ax in axs2.flat:
+        ax.xaxis.set_major_locator(dates.DayLocator())
+        ax.xaxis.set_major_formatter(dates.DateFormatter('%d\n\n%a'))
+
+    fig2.set_size_inches(10, 5)
+    mpld3.save_html(fig=fig2,  fileobj="./device2.html")
+    #mpld3.show(fig2)
+
+server = http.server.HTTPServer(("0.0.0.0", 80), MyRequestHandler)
+server.serve_forever()
